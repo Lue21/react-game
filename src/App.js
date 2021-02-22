@@ -3,7 +3,9 @@ import dino from "./dino";
 import DinoCard from "./components/DinoCard";
 import { useEffect, useState } from "react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
-import shuffle from 'lodash.shuffle'
+import shuffle from "lodash.shuffle";
+import Footer from "./components/footer";
+
 
 let doubleDino = shuffle([...dino, ...dino]);
 
@@ -13,16 +15,9 @@ function App() {
   const [moves, setMoves] = useState(0);
   const handle = useFullScreenHandle();
 
-  function reset() {
-    setMoves((moves) => moves = 0);
-    setOpened((opened) => []);
-    setMatched((matched) => []);
-    doubleDino = shuffle([...dino, ...dino]);
-  }
-
   useEffect(() => {
     if (opened.length < 2) return;
-
+   
     const firstCard = doubleDino[opened[0]];
     const secondCard = doubleDino[opened[1]];
 
@@ -32,18 +27,23 @@ function App() {
   }, [opened]);
 
   useEffect(() => {
-    if (opened.length === 2) setTimeout(() => setOpened([]), 800);
+    if (opened.length === 2) setTimeout(() => setOpened([]), 700);
   }, [opened]);
 
   useEffect(() => {
-    if (matched.length === dino.length) alert("You won!");
+    if (matched.length === dino.length) setTimeout(() => alert("You won!"), 700);
   }, [matched]);
 
   function flipCard(index) {
     setMoves((moves) => moves + 1);
     setOpened((opened) => [...opened, index]);
   }
-
+  function reset() {
+    setMoves((moves) => (moves = 0));
+    setOpened((opened) => []);
+    setMatched((matched) => []);
+    doubleDino = shuffle([...dino, ...dino]);
+  }
   return (
     <div className="App">
       <button onClick={handle.enter}>FullScreen</button>
@@ -70,6 +70,7 @@ function App() {
             );
           })}
         </div>
+        <Footer />
       </FullScreen>
     </div>
   );

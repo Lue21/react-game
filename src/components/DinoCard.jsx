@@ -1,9 +1,18 @@
 import React from 'react';
+import useSound from 'use-sound';
+import tic from './tic.mp3';
+
+
 
 export default function DinoCard({ index, dino, isFlipped, flipCard }) {
-    return (
-        <button className={`dino-card ${isFlipped ? 'flipped' : ''}`}
-        onClick={() => flipCard(index)}>
+  const [play] = useSound(tic);
+
+  return (
+    <button className={`dino-card ${isFlipped ? 'flipped' : ''}`}
+      onClick={() => {
+        flipCard(index);
+        play();
+      }}>
         <div className="inside-card">
           <div className="front">
             <img
