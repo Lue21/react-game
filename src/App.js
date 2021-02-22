@@ -3,14 +3,22 @@ import dino from "./dino";
 import DinoCard from "./components/DinoCard";
 import { useEffect, useState } from "react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
+import shuffle from 'lodash.shuffle'
 
-const doubleDino = [...dino, ...dino];
+let doubleDino = shuffle([...dino, ...dino]);
 
 function App() {
   const [opened, setOpened] = useState([]);
   const [matched, setMatched] = useState([]);
   const [moves, setMoves] = useState(0);
   const handle = useFullScreenHandle();
+
+  function reset() {
+    setMoves((moves) => moves = 0);
+    setOpened((opened) => []);
+    setMatched((matched) => []);
+    doubleDino = shuffle([...dino, ...dino]);
+  }
 
   useEffect(() => {
     if (opened.length < 2) return;
@@ -38,10 +46,11 @@ function App() {
 
   return (
     <div className="App">
-      <p>{moves} moves</p>
       <button onClick={handle.enter}>FullScreen</button>
 
       <FullScreen handle={handle}>
+        <p>{moves} moves</p>
+        <button onClick={reset}>Reset</button>
         <h1>Catch Them All</h1>
         <div className="cards-container">
           {doubleDino.map((dino, index) => {
