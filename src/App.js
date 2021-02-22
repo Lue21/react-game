@@ -2,13 +2,15 @@ import "./App.css";
 import dino from "./dino";
 import DinoCard from "./components/DinoCard";
 import { useEffect, useState } from "react";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
 
 const doubleDino = [...dino, ...dino];
 
 function App() {
   const [opened, setOpened] = useState([]);
   const [matched, setMatched] = useState([]);
-  const [moves, setMoves] = useState(0)
+  const [moves, setMoves] = useState(0);
+  const handle = useFullScreenHandle();
 
   useEffect(() => {
     if (opened.length < 2) return;
@@ -26,37 +28,40 @@ function App() {
   }, [opened]);
 
   useEffect(() => {
-    if (matched.length === dino.length) 
-      alert('You won!')
-  }, [matched])
+    if (matched.length === dino.length) alert("You won!");
+  }, [matched]);
 
   function flipCard(index) {
-    setMoves((moves) => moves + 1)
+    setMoves((moves) => moves + 1);
     setOpened((opened) => [...opened, index]);
   }
 
   return (
     <div className="App">
       <p>{moves} moves</p>
-      <h1>Catch Them All</h1>
-      <div className="cards-container">
-        {doubleDino.map((dino, index) => {
-          let isFlipped = false;
+      <button onClick={handle.enter}>FullScreen</button>
 
-          if (opened.includes(index)) isFlipped = true;
-          if (matched.includes(dino.id)) isFlipped = true;
+      <FullScreen handle={handle}>
+        <h1>Catch Them All</h1>
+        <div className="cards-container">
+          {doubleDino.map((dino, index) => {
+            let isFlipped = false;
 
-          return (
-            <DinoCard
-              key={index}
-              index={index}
-              dino={dino}
-              isFlipped={isFlipped}
-              flipCard={flipCard}
-            />
-          );
-        })}
-      </div>
+            if (opened.includes(index)) isFlipped = true;
+            if (matched.includes(dino.id)) isFlipped = true;
+
+            return (
+              <DinoCard
+                key={index}
+                index={index}
+                dino={dino}
+                isFlipped={isFlipped}
+                flipCard={flipCard}
+              />
+            );
+          })}
+        </div>
+      </FullScreen>
     </div>
   );
 }
