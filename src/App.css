@@ -16,11 +16,12 @@ body {
 
 .App {
   text-align: center;
+
 }
 
 .nav {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   margin: 20px;
 }
 
@@ -94,11 +95,14 @@ transform: rotateY(180deg);
 
 
 
-
+.buttons {
+  display: flex;
+}
 /*Play/Pause*/
 
 .player {
   display: flex;
+  flex-direction: row;
   height: 15px;
   width: 15px;
   margin-right: 30px;
