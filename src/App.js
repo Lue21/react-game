@@ -5,19 +5,23 @@ import { useEffect, useState } from "react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import shuffle from "lodash.shuffle";
 import Footer from "./components/footer";
-
+import Button from "@material-ui/core/Button";
+import Player from "./components/Player";
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
 
 let doubleDino = shuffle([...dino, ...dino]);
 
 function App() {
   const [opened, setOpened] = useState([]);
-  const [matched, setMatched] = useState([]);
+  const [matched, setMatched] = useState(
+    localStorage.getItem("MatchedCards") || []
+  );
   const [moves, setMoves] = useState(0);
   const handle = useFullScreenHandle();
 
   useEffect(() => {
     if (opened.length < 2) return;
-   
+
     const firstCard = doubleDino[opened[0]];
     const secondCard = doubleDino[opened[1]];
 
@@ -31,7 +35,9 @@ function App() {
   }, [opened]);
 
   useEffect(() => {
-    if (matched.length === dino.length) setTimeout(() => alert("You won!"), 700);
+    if (matched.length === dino.length)
+      setTimeout(() => alert("You won!"), 700);
+    localStorage.setItem("MatchedCards", matched);
   }, [matched]);
 
   function flipCard(index) {
@@ -43,15 +49,26 @@ function App() {
     setOpened((opened) => []);
     setMatched((matched) => []);
     doubleDino = shuffle([...dino, ...dino]);
+    localStorage.clear();
+
+    
   }
   return (
     <div className="App">
-      <button onClick={handle.enter}>FullScreen</button>
+      <h1>Catch Them All</h1>
 
       <FullScreen handle={handle}>
-        <p>{moves} moves</p>
-        <button onClick={reset}>Reset</button>
-        <h1>Catch Them All</h1>
+        <div className="nav">
+          <p>{moves} moves</p>
+          <Player />
+          <Button variant="contained" color="primary" onClick={handle.enter}>
+            <FullscreenIcon />
+          </Button>
+          <Button variant="contained" color="primary" onClick={reset}>
+            Reset
+          </Button>
+        </div>
+
         <div className="cards-container">
           {doubleDino.map((dino, index) => {
             let isFlipped = false;
