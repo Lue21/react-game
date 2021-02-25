@@ -5,7 +5,7 @@ import tic from './tic.mp3';
 
 
 
-export default function DinoCard({ index, dino, isFlipped, flipCard }) {
+export default function DinoCard({ index, dino, isFlipped, flipCard, isChecked }) {
   const [play] = useSound(tic);
 
   return (
@@ -23,7 +23,7 @@ export default function DinoCard({ index, dino, isFlipped, flipCard }) {
             />
           </div>
           <div className="back"><img
-              src={"https://kate-natours.netlify.app/footprint.png"}
+              src={`${isChecked ? "https://kate-natours.netlify.app/footprint.png" : "https://kate-natours.netlify.app/tyrannosaurus-rex.png"}`}
               alt="dino"
               width="20"
             /></div>

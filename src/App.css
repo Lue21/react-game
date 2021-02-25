@@ -27,6 +27,11 @@ body {
 
 p {
   font-size: 20px;
+  font-family: 'Stick', sans-serif;
+}
+h1 {
+  font-family: 'Stick', sans-serif;
+  font-size: 40px;
 }
 
 .cards-container {
@@ -120,4 +125,30 @@ transform: rotateY(180deg);
   margin-top: 20px;
   font-size: 9px;
   color: rgb(71, 71, 71);
+}
+
+
+
+@media (min-width: 500px) and (max-width: 720px) {
+
+  .dino-card {
+
+    width: 90px;
+    height: 90px;
+  }  
+  .cards-container {
+    display: grid;
+    grid-template: repeat(3, 1fr) / repeat(4, 1fr);
+    gap: 5px;
+  
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 20px;
+   
+  }
+
 }
