@@ -1,5 +1,4 @@
 import "./App.css";
-import { dino } from "./dino";
 import DinoCard from "./components/DinoCard";
 import { useEffect, useState } from "react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
@@ -14,47 +13,56 @@ import Checkbox from "@material-ui/core/Checkbox";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./components/Globalstyle";
 import { lightTheme, darkTheme } from "./components/Themes";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl";
 
 let doubleDino = shuffle([...dinoBig, ...dinoBig]);
 
 function App() {
   // FAST MODE///////////////////////////
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(localStorage.getItem("FastMode") === "false" || localStorage.getItem("FastMode") === null ? false : true);
 
   const handleCheck = (event) => {
     setChecked(event.target.checked);
+    localStorage.setItem("FastMode", event.target.checked);
   };
 
-
-  const [checked2, setChecked2] = useState(false);
+  ///CARD BACK/////////////////////////////
+  const [checked2, setChecked2] = useState(
+    localStorage.getItem("CardBack") === "false" || localStorage.getItem("CardBack") === null ? false : true);
 
   const handleCheck2 = (event) => {
     setChecked2(event.target.checked);
+
+    localStorage.setItem("CardBack", event.target.checked)
   };
 
-  // NIGHT THEME /////////////
+  // NIGHT THEME ////////////////////////
   const [theme, setTheme] = useState(
-    localStorage.getItem("SwitchT") || "light"
+    localStorage.getItem("SwitchN") === "false" || localStorage.getItem("SwitchN") === null ? "light" : "dark"
   );
   const [state, setState] = useState({
-    checkedB: localStorage.getItem("SwitchN") || false,
+    checkedB: localStorage.getItem("SwitchN") === "false" || localStorage.getItem("SwitchN") === null ? false : true,
   });
   const themeToggler = (event) => {
     theme === "light" ? setTheme("dark") : setTheme("light");
     setState({ ...state, [event.target.name]: event.target.checked });
-    localStorage.setItem("SwitchN", true);
-    localStorage.setItem("SwitchT", "dark");
+    localStorage.setItem("SwitchN", event.target.checked);
   };
 
-  // FULLSCREEN////////////////////
+  // FULLSCREEN////////////////////////
   const handle = useFullScreenHandle();
 
-  // CARDS////////////////////
+  // CARDS////////////////////////////
   const [opened, setOpened] = useState([]);
   const [matched, setMatched] = useState(
     localStorage.getItem("MatchedCards") || []
   );
-  const [moves, setMoves] = useState(0);
+
+  let savedMoves = localStorage.getItem("Moves") || 0;
+
+  const [moves, setMoves] = useState(+savedMoves || 0);
 
   useEffect(() => {
     if (opened.length < 2) return;
@@ -66,9 +74,10 @@ function App() {
       setMatched((matched) => [...matched, firstCard.id]);
     }
 
-    if (opened.length === 2 && checked === true) setTimeout(() => setOpened([]), 400);
+    if (opened.length === 2 && checked === true)
+      setTimeout(() => setOpened([]), 400);
     setTimeout(() => setOpened([]), 800);
-  }, [opened]);
+  }, [opened, checked]);
 
   useEffect(() => {
     if (matched.length === dinoBig.length)
@@ -79,6 +88,7 @@ function App() {
   function flipCard(index) {
     setMoves((moves) => moves + 1);
     setOpened((opened) => [...opened, index]);
+    localStorage.setItem("Moves", moves + 1);
   }
   function reset() {
     // setState((state) => false);
@@ -97,37 +107,55 @@ function App() {
         <div className="App">
           <FullScreen handle={handle}>
             <h1>Find Them All</h1>
+            <p>{moves} moves</p>
+
             <div className="nav">
-              <p>{moves} moves</p>
-              <div className="buttons">
-                <Switch
-                  checked={state.checkedB}
-                  onChange={themeToggler}
-                  name="checkedB"
-                  color="primary"
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handle.enter}
-                >
-                  <FullscreenIcon />
-                </Button>
-                <Button variant="contained" color="primary" onClick={reset}>
-                  New Game
-                </Button>
-                <Checkbox
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  onChange={handleCheck}
-                />
-                <Checkbox
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  onChange={handleCheck2}
-                />
-              </div>
-              <Player />
+              <FormControl component="fieldset">
+                <FormGroup aria-label="position" row>
+                  <FormControlLabel
+                    value="start"
+                    control={
+                      <Switch
+                        checked={state.checkedB}
+                        onChange={themeToggler}
+                        name="checkedB"
+                        color="primary"
+                      />
+                    }
+                    label="Night mode"
+                    labelPlacement="start"
+                  />
+                  <FormControlLabel
+                    value="start"
+                    control={
+                      <Checkbox
+                      checked={localStorage.getItem("FastMode") === 'false' || localStorage.getItem("FastMode") === null  ? false : true}
+
+                        color="primary"
+                        inputProps={{ "aria-label": "secondary checkbox" }}
+                        onChange={handleCheck}
+                      />
+                    }
+                    label="Fast mode"
+                    labelPlacement="start"
+                  />
+                  <FormControlLabel
+                    value="start"
+                    control={
+                      <Checkbox
+                      checked={localStorage.getItem("CardBack") === 'false' || localStorage.getItem("CardBack") === null ? false : true}
+
+                        color="primary"
+                        inputProps={{ "aria-label": "secondary checkbox" }}
+                        onChange={handleCheck2}
+                      />
+                    }
+                    label="Card back"
+                    labelPlacement="start"
+                  />
+                  <Player />
+                </FormGroup>
+              </FormControl>
             </div>
 
             <div className="cards-container">
@@ -148,6 +176,14 @@ function App() {
                 );
               })}
             </div>
+            <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handle.enter}
+                  ><FullscreenIcon /></Button>
+                  <Button variant="contained" color="primary" onClick={reset}>
+                    New Game
+                  </Button>
             <Footer />
           </FullScreen>
         </div>

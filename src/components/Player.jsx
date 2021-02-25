@@ -30,7 +30,6 @@ const Player = () => {
  
   return (
     <div className="player">
-      <p>Music:</p>
       {isPlaying ? <Pause stop={stop} /> : <Play play={play} />}
       <VolumeUpIcon color='primary' className="button" onClick={handleChangePlus}></VolumeUpIcon>
       <VolumeDownIcon color='primary' className="button" onClick={handleChangeMinus}></VolumeDownIcon>
