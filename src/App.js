@@ -1,5 +1,5 @@
 import "./App.css";
-import dino from "./dino";
+import {dino} from "./dino";
 import DinoCard from "./components/DinoCard";
 import { useEffect, useState } from "react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
@@ -8,39 +8,56 @@ import Footer from "./components/footer";
 import Button from "@material-ui/core/Button";
 import Player from "./components/Player";
 import FullscreenIcon from "@material-ui/icons/Fullscreen";
-import dinoBig from "./dino";
+import {dinoBig} from "./dino";
+import Switch from "@material-ui/core/Switch";
+import Checkbox from "@material-ui/core/Checkbox";
 
 import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./components/Globalstyle";
 import { lightTheme, darkTheme } from "./components/Themes";
 
-import Switch from "@material-ui/core/Switch";
-
-let doubleDino = shuffle([...dino, ...dino]);
-let doubleDinoBig = shuffle([...dinoBig, ...dinoBig]);
+let doubleDino = shuffle([...dinoBig, ...dinoBig]);
 
 function App() {
-  const [opened, setOpened] = useState([]);
-  const [matched, setMatched] = useState(
-    localStorage.getItem("MatchedCards") || []
-  );
-  const [moves, setMoves] = useState(0);
-  const handle = useFullScreenHandle();
 
-  const [theme, setTheme] = useState(localStorage.getItem("SwitchT") || "light");
+
+  // HARD MODE///////////////////////////
+  const [checked, setChecked] = useState(false);
+
+  const handleCheck = (event) => {
+    setChecked(event.target.checked);
+    if (checked) doubleDino = shuffle([...dinoBig, ...dinoBig]);
+      
+    else  doubleDino = shuffle([...dino, ...dino]);
+
+
+  };
+
+
+
+  // NIGHT THEME /////////////
+  const [theme, setTheme] = useState(
+    localStorage.getItem("SwitchT") || "light"
+  );
   const [state, setState] = useState({
     checkedB: localStorage.getItem("SwitchN") || false,
   });
   const themeToggler = (event) => {
     theme === "light" ? setTheme("dark") : setTheme("light");
     setState({ ...state, [event.target.name]: event.target.checked });
-    localStorage.setItem("SwitchN", true)
-    localStorage.setItem("SwitchT", 'dark')
-
-
-
+    localStorage.setItem("SwitchN", true);
+    localStorage.setItem("SwitchT", "dark");
   };
 
+  // FULLSCREEN////////////////////
+  const handle = useFullScreenHandle();
+
+  // CARDS////////////////////
+  const [opened, setOpened] = useState([]);
+  const [matched, setMatched] = useState(
+    localStorage.getItem("MatchedCards") || []
+  );
+  const [moves, setMoves] = useState(0);
 
   useEffect(() => {
     if (opened.length < 2) return;
@@ -51,14 +68,13 @@ function App() {
     if (firstCard.id === secondCard.id) {
       setMatched((matched) => [...matched, firstCard.id]);
     }
-  }, [opened]);
 
-  useEffect(() => {
     if (opened.length === 2) setTimeout(() => setOpened([]), 700);
   }, [opened]);
 
+
   useEffect(() => {
-    if (matched.length === dino.length)
+    if (matched.length === dinoBig.length)
       setTimeout(() => alert("You won!"), 700);
     localStorage.setItem("MatchedCards", matched);
   }, [matched]);
@@ -69,13 +85,17 @@ function App() {
   }
   function reset() {
     setState((state) => false);
-    setTheme((theme) => 'light');
+    setTheme((theme) => "light");
     setMoves((moves) => (moves = 0));
     setOpened((opened) => []);
     setMatched((matched) => []);
-    doubleDino = shuffle([...dino, ...dino]);
     localStorage.clear();
   }
+
+  // function hardMode() {
+  //   doubleDino = shuffle([...dinoBig, ...dinoBig]);
+  // }
+
   return (
     <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
       <>
@@ -104,6 +124,12 @@ function App() {
                 <Button variant="contained" color="primary" onClick={reset}>
                   Reset
                 </Button>
+                <Checkbox
+        
+        color="primary"
+              inputProps={{ 'aria-label': 'secondary checkbox' }}
+              onChange={handleCheck}
+      />
               </div>
               <Player />
             </div>

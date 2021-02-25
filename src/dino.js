@@ -2,7 +2,7 @@
 
 
 
-const dino = [
+export const dino = [
     {
       id: 1
     },
@@ -24,7 +24,8 @@ const dino = [
   
   ]
   
-const dinoBig = [
+export const dinoBig = [
+
   {
     id: 1
   },
@@ -64,5 +65,3 @@ const dinoBig = [
   ]
 
 
-export default dino;
-export {dinoBig};
